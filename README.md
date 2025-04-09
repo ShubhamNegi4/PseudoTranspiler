@@ -11,3 +11,43 @@
 
 ## SYSTEM ARCHITECTURE
 ![Arch](arch.png)
+
+## PSEUDOCODE STANDARD 
+this portion will keep on updating after new features till this point we have : 
+1. Variables
+	Declaration and Assignment:
+        Syntax:
+                SET x TO 10
+                SET y TO x + 5
+        Input: 
+                INPUT <variable> 
+        OUTPUT:
+                PRINT <expression>
+       
+       
+2. Conditionals
+        If-Else Statement:
+        Syntax:
+                IF <condition> THEN
+                <statements>
+                ELSE
+                <statement>
+                END IF
+        (if else ladder will do it later)
+
+
+3. Iteratives 
+        Syntax:
+                WHILE <condition> DO
+                <statements>
+                END WHILE
+        (for loop will do it later)
+
+4. Expressions & Operators:
+Structure: <term> <operator> <term> or single <term>
+Terms: Variables, numbers, strings (in quotes)
+
+Arithmetic: PLUS, MINUS, MULTIPLY, DIVIDE , MOD
+Comparison: EQ, NE, GT, LT, GE, LE
+
+
