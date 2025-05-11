@@ -134,7 +134,13 @@ def t_error(token):
 
 
 
-#                                       get the tokenizer object
+'''
+        get the tokenizer object , When this lex.lex() runs:
+        PLY will: Scan the entire lexer.py module (where you wrote all the rules).
+        Collect: tokens , all the t_* regex rules , t_error, t_ignore, etc.
+        and Generate a working finite-state machine lexer, and store it in the object lexer.
+        
+'''
 lexer = lex.lex()
 
 
