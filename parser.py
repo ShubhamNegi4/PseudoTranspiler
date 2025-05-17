@@ -16,13 +16,13 @@ from lexer import tokens
         example " 4 * 5 " needs to be converted to " ID MULTIPY ID " to be made grammer
         
         Hence the actual calling of parser takes data and teh tokenizer
-        (ast = parser.parse(data, lexer=lexer.lexer))
+        (Ast = parser.parse(data, lexer=lexer.lexer))
 
         HOW to write grammer in python : 
 
 
 '''
-import ast
+import Ast
 
 '''
         The operators used in grammer need to define their associativity and precedence
@@ -60,9 +60,9 @@ start = "program"       # define start symbol
 
         ----> the parser generates a parsing table in the memory using the grammer we are giving it
         then using that table stack starts implementation , when teh actual reduce happens
-        teh result / AST is created 
+        teh result / Ast is created 
 
-        ----> when the reducing is happening the parser sends a list of objects (tokens if we dont use AST else AST) 
+        ----> when the reducing is happening the parser sends a list of objects (tokens if we dont use Ast else Ast) 
         that matches the rule to ve reduced and we access the lhs and rhs using list[0]  = list[1] + list[2] for example
 
 '''
@@ -96,35 +96,34 @@ def p_statement(p):
 
 #grammer for assignment
 def p_assignment(p):
-    'assignment : SET ID TO operand'
-    variable = ast.Node("variable", value=p[2])
-    p[0] = ast.AssignNode(variable, p[4])
-    #   variableNode , valueNode
+        'assignment : SET ID TO term_low'
+        variable = Ast.Node("variable", value=p[2])
+        p[0] = Ast.AssignNode(variable, p[4])
+        #   variableNode , valueNode
 
 
 #grammer for output
 def p_input_stmt(p):
         'input_stmt : INPUT ID'
-        variableNode = ast.Node('variable',value=p[2])
-        p[0] = ast.InputNode(variableNode)
+        variableNode = Ast.Node('variable',value=p[2])
+        p[0] = Ast.InputNode(variableNode)
         #       variableORliteralNode
 
 
 #grammer for output
 def p_output_stmt(p):
         '''output_stmt : PRINT term_low
-            | PRINT operand
         '''
-        p[0] = ast.OutputNode(p[2])
+        p[0] = Ast.OutputNode(p[2])
         #       variableORliteralNode
 
 
 
 #grammer for if part
 def p_if_stmt(p):
-       '''if_stmt : IF condition THEN NEWLINE statement_list else_part END IF
+       '''if_stmt : IF condition THEN NEWLINE statement_list else_part END
        ''' 
-       p[0] = ast.IfNode(p[2],p[5],p[6])
+       p[0] = Ast.IfNode(p[2],p[5],p[6])
        #        condition , statemnts , else part
 
 
@@ -140,9 +139,9 @@ def p_else_part(p):
 
 #grammer for while
 def p_while_stmt(p):
-        '''while_stmt : WHILE condition DO NEWLINE statement_list END WHILE
+        '''while_stmt : WHILE condition DO NEWLINE statement_list END
         '''
-        p[0] = ast.WhileNode(p[2],p[5])
+        p[0] = Ast.WhileNode(p[2],p[5])
         #       conditionnode , statementnode
 
 
@@ -150,7 +149,7 @@ def p_while_stmt(p):
 def p_condition(p):
         '''condition : term_low comp_op term_low
         '''
-        p[0] = ast.BinaryOperatorNode(p[1],p[3],p[2].type)
+        p[0] = Ast.BinaryOperatorNode(p[1],p[3],p[2])
         #   leftnode , rightnode , value  
 
 
@@ -171,11 +170,11 @@ def p_comp_op(p):
 #grammer for term_low
 def p_term_low(p):
         '''term_low : term_low PLUS term_high
-                | term_low MINUS term_low
+                | term_low MINUS term_high
                 | term_high
         '''
         if len(p) == 4:
-                p[0] = ast.BinaryOperatorNode(p[1],p[3],p[2].type)
+                p[0] = Ast.BinaryOperatorNode(p[1],p[3],p[2])
                 #   leftnode , rightnode , value  
         else:
                 p[0] = p[1]
@@ -189,7 +188,7 @@ def p_term_high(p):
                 | operand
         '''
         if len(p) == 4:
-                p[0] = ast.BinaryOperatorNode(p[1],p[3],p[2].type)
+                p[0] = Ast.BinaryOperatorNode(p[1],p[3],p[2])
                 #   leftnode , rightnode , value    
         else:
                 p[0] = p[1]
@@ -201,18 +200,23 @@ def p_operand(p):
                 | STRING
                 | ID
         '''
-        if p[1].type == 'NUMBER':
-                p[0] = ast.Node('number',value = p[1].value)
-        elif p[1].type == 'STRING':
-                p[0] = ast.Node('string',value = p[1].value)
+        if p.slice[1].type == 'NUMBER':
+                p[0] = Ast.Node('number',value = p[1])
+        elif p.slice[1].type == 'STRING':
+                p[0] = Ast.Node('string',value = p[1])
         else:
-                p[0] = ast.Node('variable',value = p[1].value)
+                p[0] = Ast.Node('variable',value = p[1])
                 #       type , value
 
 
 
 # When parser sees an input it can't reduce or shift based on the grammar,it calls p_error:
 def p_error(p):
-        print(f"Syntax error at token '{p.value}' on line {p.lineno}")
+        if p:
+                print(f"Syntax error at token '{p.value}' on line {p.lineno}")
+        else:
+                print("Unknown Syntax error")
 
 
+
+parser = yacc.yacc()

@@ -15,16 +15,28 @@ class Node:
                 self.children = (children if children else [])
                 self.value = value
 
+        def __str__(self):
+                return f"Class type : {self.type}\n\tvalue:{self.value}\n\tchildren:{self.children}"
+        
+        def __repr__(self):
+                return self.__str__()
+
 
 '''
-    assignment - SET ID TO operand
+    assignment - SET ID TO term_low
     assignment only needs the id and operand 
 
 '''
 class AssignNode(Node):
         def __init__(self,variableNode,valueNode):
                 #       type  , childrens - Node() of number , string , id
-                super().__init__("assigment", [variableNode,valueNode])
+                super().__init__("assignment", [variableNode,valueNode])
+
+        def __str__(self):
+                return super().__str__()
+        
+        def __repr__(self):
+                return super().__repr__()
 
 
 '''
@@ -36,6 +48,12 @@ class InputNode(Node):
         def __init__(self, variableNode):
                 super().__init__("input",[variableNode])
 
+        def __str__(self):
+                return super().__str__()
+        
+        def __repr__(self):
+                return super().__repr__()
+
 
 '''
         output_stmt - PRINT term_low
@@ -46,9 +64,15 @@ class OutputNode(Node):
         def __init__(self, variableORliteralNode):
                 super().__init__("output",[variableORliteralNode])
 
+        def __str__(self):
+                return super().__str__()
+        
+        def __repr__(self):
+                return super().__repr__()
+
 
 '''
-        if_stmt - IF condition THEN NEWLINE statement_list else_part END IF
+        if_stmt - IF condition THEN NEWLINE statement_list else_part END
         is only needs the condition , statemnts , else part
 
 '''
@@ -56,16 +80,28 @@ class IfNode(Node):
         def __init__(self,conditionNode,statementNode,elseNode):
                 super().__init__("if",[conditionNode,statementNode,elseNode] 
                                 if elseNode else [conditionNode,statementNode])
+                
+        def __str__(self):
+                return super().__str__()
+        
+        def __repr__(self):
+                return super().__repr__()
 
 
 '''
-        while_stmt - WHILE condition DO NEWLINE statement_list END WHILE
+        while_stmt - WHILE condition DO NEWLINE statement_list END
         while only needs conditions and statemets
 
 '''
 class WhileNode(Node):
         def __init__(self,conditionNode,statementNode):
                 super().__init__("while",[conditionNode,statementNode])
+        
+        def __str__(self):
+                return super().__str__()
+        
+        def __repr__(self):
+                return super().__repr__()
                 
 
 '''
@@ -85,6 +121,12 @@ class WhileNode(Node):
 class BinaryOperatorNode(Node):
         def __init__(self,leftNode,rightNode,value):
                 super().__init__("operator",[leftNode,rightNode], value)
+        
+        def __str__(self):
+                return super().__str__()
+        
+        def __repr__(self):
+                return self.__str__()
 
 
 '''
