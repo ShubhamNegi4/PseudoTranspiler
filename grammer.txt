@@ -1,0 +1,40 @@
+program - statement_list
+
+statement_list - statement NEWLINE statement_list
+               | statement NEWLINE
+
+statement - assignment
+          | input_stmt
+          | output_stmt
+          | if_stmt
+          | while_stmt
+
+assignment - SET ID TO term_low
+
+input_stmt - INPUT ID
+
+output_stmt - PRINT term_low
+
+if_stmt - IF condition THEN NEWLINE statement_list else_part END
+
+else_part - ELSE NEWLINE statement_list
+          | ε
+
+while_stmt - WHILE condition DO NEWLINE statement_list END
+
+condition - term_low comp_op term_low
+
+comp_op - EQ | NE | GT | LT | GE | LE
+
+term_low - term_low PLUS term_high
+         | term_low MINUS term_high
+         | term_high
+
+term_high - term_high MULTIPLY operand
+          | term_high DIVIDE operand
+          | term_high MOD operand
+          | operand
+
+operand - NUMBER
+        | STRING
+        | ID

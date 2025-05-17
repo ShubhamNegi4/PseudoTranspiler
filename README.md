@@ -44,7 +44,7 @@ IF <condition> THEN
     <statements>
 ELSE
     <statements>
-END IF
+END
 ```
 *(If-Else ladder will be added later)*
 
@@ -55,7 +55,7 @@ END IF
 ```
 WHILE <condition> DO
     <statements>
-END WHILE
+END 
 ```
 *(For loop will be added later)*
 
