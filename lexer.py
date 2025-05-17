@@ -121,6 +121,7 @@ def t_NEWLINE(token):
         r'\n+'
         token.lexer.lineno += len(token.value)          #in PLY eaxh token has reference to the lexer class
                                                 # which is token.lexer so we can upadte lexer.lineno 
+        token.value = '\n'
         return token
 
 

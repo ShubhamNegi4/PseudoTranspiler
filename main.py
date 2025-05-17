@@ -1,4 +1,6 @@
 import lexer
+import parser
+import AstVisual
 
 if __name__ == "__main__":
 
@@ -27,11 +29,29 @@ if __name__ == "__main__":
                                 exit()
 
 
-                #       call lexer ( yylex() in lex.c)
+                #       call the lexer
                 lexer.lexer.input(data)
-                print("\nTokens:\n")
+                print('*********************************************************')
+                print("\nTokens : Each token has a type , value , lex no : think of it as row no , lexpos : think of it as column no\n")
                 for token in lexer.lexer:       # iterate over lexer object itself to get matched tokens
-                        print(f"Type: {token.type}, Value: {token.value}")
+                        print(f"Type: {token.type}")
+                        print("        Value:",end=" ")
+                        if token.value == '\n':
+                                print("newline")
+                        else:
+                                print(token.value)
+                        print(f"        line no: {token.lineno}")
+                        print(f"        lexpos: {token.lexpos}")
+
+
+                #       call the parser
+                print('*********************************************************')
+                ast = parser.parser.parse(data,lexer = lexer.lexer)
+                print("AST:")
+                AstVisual.visualizeText(ast)
+                AstVisual.visualizeGraph(ast)
+
+
 
         else:
                 print("Enter valid choice")

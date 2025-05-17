@@ -1,6 +1,17 @@
 INPUT x
-IF x < 18 THEN 
-PRINT "NO"
-ELSE 
-PRINT "YES"
-END IF
+SET divisors to 0
+SET i to 2
+
+while i * i <= x DO
+IF x % i == 0 THEN
+SET divisors TO divisors + 1
+END
+SET i TO i + 1
+END
+
+IF divisors == 0 THEN
+PRINT "PRIME"
+ELSE
+PRINT "NOT PRIME"
+END
+
