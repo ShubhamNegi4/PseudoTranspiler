@@ -24,7 +24,7 @@ while_stmt - WHILE condition DO NEWLINE statement_list END
 
 condition - term_low comp_op term_low
 
-comp_op - EQ | NE | GT | LT | GE | LE
+comp_op - EQ | NE | GT | LT | GE | LE | t_TYPE_EQ
 
 term_low - term_low PLUS term_high
          | term_low MINUS term_high

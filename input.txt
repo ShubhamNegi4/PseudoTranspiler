@@ -1,11 +1,16 @@
 INPUT x
+
+IF x === 1 THEN
+
 SET divisors to 0
 SET i to 2
 
-while i * i <= x DO
+while i * i <= 1 DO
+
 IF x % i == 0 THEN
 SET divisors TO divisors + 1
 END
+
 SET i TO i + 1
 END
 
@@ -14,4 +19,10 @@ PRINT "PRIME"
 ELSE
 PRINT "NOT PRIME"
 END
+
+ELSE
+PRINT "NUMBER NOT ENTERED"
+END
+
+
 

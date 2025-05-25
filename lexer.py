@@ -11,12 +11,13 @@ in lex.c this is generally imporetd form yy.tab.h but in PLY we define it here o
 
 tokens = [
         # Keywords
-        'SET', 'TO', 'INPUT', 'PRINT',
+        'SET', 'TO', 'INPUT' , 'PRINT',
         'IF', 'THEN', 'ELSE', 'END', 'WHILE', 'DO',
 
         # Operators
         'PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'MOD',
         'EQ', 'NE', 'GT', 'LT', 'GE', 'LE',
+        'TYPE_EQ',
 
         # Literals
         'NUMBER', 'STRING', 'ID',
@@ -83,6 +84,7 @@ t_GE        = r'>='
 t_LE        = r'<='
 t_GT        = r'>'
 t_LT        = r'<'
+t_TYPE_EQ   = r'==='
 
 
 # Ignored characters (spaces and tabs) [\t] {}
@@ -143,5 +145,6 @@ def t_error(token):
         
 '''
 lexer = lex.lex()
+lexer.errors = 0
 
 

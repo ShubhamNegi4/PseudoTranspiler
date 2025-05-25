@@ -45,7 +45,7 @@ def visualizeGraph(ast):
                 if isinstance(node,list):
                         label = "statement_list"
                 else:
-                        label = f"{node.type}"
+                        label = f"type : {node.type}"
                         if node.value is not None:
                                 label += f"\n(value: {node.value})"
                 return label
