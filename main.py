@@ -1,6 +1,8 @@
 import lexer
 import parser
 import AstVisual
+import semantic
+
 
 if __name__ == "__main__":
 
@@ -43,14 +45,27 @@ if __name__ == "__main__":
                         print(f"        line no: {token.lineno}")
                         print(f"        lexpos: {token.lexpos}")
 
+                if lexer.lexer.errors > 0:
+                        exit(1)
 
                 #       call the parser
                 print('*********************************************************')
-                ast = parser.parser.parse(data,lexer = lexer.lexer)
+                try:
+                        ast = parser.parser.parse(data,lexer = lexer.lexer)
+                except  Exception as e:
+                        print("Caught an error:", e)
+                        exit()
+
                 print("AST:")
                 AstVisual.visualizeText(ast)
                 AstVisual.visualizeGraph(ast)
 
+                #       call the semantic analyzer
+                if semantic.SemanticAnalysis(ast):
+                        print("AST is Semantically correct")
+                else:
+                        print("AST is Semantically not correct")
+                        exit()
 
 
         else:

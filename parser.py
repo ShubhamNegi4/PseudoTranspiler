@@ -163,6 +163,7 @@ def p_comp_op(p):
                 | LT 
                 | GE 
                 | LE
+                | TYPE_EQ
         '''
         p[0] = p[1]
 
@@ -210,12 +211,16 @@ def p_operand(p):
 
 
 
+
+
 # When parser sees an input it can't reduce or shift based on the grammar,it calls p_error:
 def p_error(p):
         if p:
-                print(f"Syntax error at token '{p.value}' on line {p.lineno}")
+                print(f"Syntax error at token '{p.value}'")
         else:
                 print("Unknown Syntax error")
+        
+        raise SyntaxError("Invalid syntax in custom parser")
 
 
 
