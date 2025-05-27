@@ -2,11 +2,12 @@ import os
 import subprocess
 import customtkinter as ctk
 from customtkinter import CTkImage
-from PIL import Image
+from PIL import Image, ImageTk
 import io
 import sys
 import warnings
 import tkinter as tk
+from tkinter import ttk
 
 import lexer
 import parser
@@ -14,10 +15,9 @@ import AstVisual
 import semantic
 import codegen
 
-#       enable copy 
+# enable copy 
 def enable_copy_shortcut(widget):
     widget.bind("<Control-c>", lambda event: widget.event_generate("<<Copy>>"))
-
 
 # Suppress CtkLabel UserWarning about PhotoImage
 warnings.filterwarnings(
@@ -111,7 +111,6 @@ class InputWindow(ctk.CTk):
                         return  # Silently ignore empty input
 
                 # Lex & Parse
-
                 lexer.lexer.input(data)
                 if lexer.lexer.errors > 0:
                         OutputWindow(lexer.lexer)
@@ -131,27 +130,26 @@ class InputWindow(ctk.CTk):
 
                 AstVisual.visualizeGraph(ast)
                 img_path = 'astIMG.png'
-                ast_image = None
+                original_pil_image = None
                 if os.path.exists(img_path):
-                        pil = Image.open(img_path).resize((400, 400), RESAMPLE)
-                        ast_image = CTkImage(light_image=pil, dark_image=pil, size=(400, 400))
+                        original_pil_image = Image.open(img_path)
+                        # Open separate window for AST image
+                        ImageWindow(original_pil_image)
 
                 # Semantic Analysis
                 sem_ok = semantic.SemanticAnalysis(ast)
 
                 if sem_ok == False:
-                        OutputWindow(lexer.lexer,None,ast_text,ast_image)
+                        OutputWindow(lexer.lexer,None,ast_text)
                         return
 
                 # Code Generation
                 python_code = codegen.CodeGenerator(ast)
 
                 # Open the output window
-                OutputWindow(lexer.lexer,None, ast_text, ast_image, python_code,True)
+                OutputWindow(lexer.lexer,None, ast_text, python_code,True)
 
-
-
-def makeComponent(tabview, tab_name, content, is_list=True):
+def makeComponent(tabview, tab_name, content, is_list=True, is_python=False):
         frame = ctk.CTkFrame(tabview.tab(tab_name), fg_color="#E6E6FA")
         frame.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
         frame.grid_rowconfigure(0, weight=1)
@@ -175,6 +173,14 @@ def makeComponent(tabview, tab_name, content, is_list=True):
                     text_widget.insert("end", f"{item}\n\n")
             else:
                 text_widget.insert("end", content)
+                
+            if is_python:
+                # Configure tags for Python syntax highlighting
+                text_widget.tag_configure("keyword", foreground="#FF6F61")
+                text_widget.tag_configure("string", foreground="#00FF00")
+                text_widget.tag_configure("comment", foreground="#808080")
+                # Highlight Python code
+                highlight_python_syntax(text_widget, content)
 
         # Ensure the tab expands properly
         tabview.tab(tab_name).grid_rowconfigure(0, weight=1)
@@ -182,10 +188,130 @@ def makeComponent(tabview, tab_name, content, is_list=True):
 
         return text_widget
 
+def highlight_python_syntax(text_widget, content):
+    """Highlight Python keywords, strings, and comments in the text widget."""
+    text_widget.tag_remove("keyword", "1.0", "end")
+    text_widget.tag_remove("string", "1.0", "end")
+    text_widget.tag_remove("comment", "1.0", "end")
 
+    # Python keywords
+    keywords = [
+        'def', 'class', 'if', 'else', 'elif', 'for', 'while', 'return', 
+        'import', 'from', 'as', 'with', 'try', 'except', 'finally', 'raise',
+        'break', 'continue', 'pass', 'in', 'is', 'and', 'or', 'not'
+    ]
+
+    # Highlight keywords
+    for keyword in keywords:
+        start = "1.0"
+        while True:
+            pos = text_widget.search(r'\y' + keyword + r'\y', start, stopindex="end", regexp=True)
+            if not pos:
+                break
+            end_pos = f"{pos}+{len(keyword)}c"
+            text_widget.tag_add("keyword", pos, end_pos)
+            start = end_pos
+
+    # Highlight strings (both single and double quotes)
+    start = "1.0"
+    while True:
+        pos = text_widget.search(r'[\'"]', start, stopindex="end")
+        if not pos:
+            break
+        quote_type = text_widget.get(pos)
+        end_pos = text_widget.search(quote_type, f"{pos}+1c", stopindex="end")
+        if not end_pos:
+            end_pos = "end"
+        else:
+            end_pos = f"{end_pos}+1c"
+        text_widget.tag_add("string", pos, end_pos)
+        start = end_pos
+
+    # Highlight comments
+    start = "1.0"
+    while True:
+        pos = text_widget.search(r'#', start, stopindex="end")
+        if not pos:
+            break
+        end_pos = text_widget.search(r'\n', pos, stopindex="end")
+        if not end_pos:
+            end_pos = "end"
+        text_widget.tag_add("comment", pos, end_pos)
+        start = end_pos
+
+class ImageWindow(tk.Toplevel):
+    def __init__(self, original_pil_image):
+        super().__init__()
+        self.title("AST Image")
+        self.geometry("800x600")
+
+        # Configure main window grid
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+
+        # Create canvas with scrollbars
+        canvas_frame = tk.Frame(self)
+        canvas_frame.grid(row=0, column=0, sticky="nsew")
+        canvas_frame.grid_rowconfigure(0, weight=1)
+        canvas_frame.grid_columnconfigure(0, weight=1)
+
+        self.canvas = tk.Canvas(canvas_frame, bg="#E6E6FA")
+        self.canvas.grid(row=0, column=0, sticky="nsew")
+
+        # Add scrollbars
+        h_scroll = ttk.Scrollbar(canvas_frame, orient="horizontal", command=self.canvas.xview)
+        v_scroll = ttk.Scrollbar(canvas_frame, orient="vertical", command=self.canvas.yview)
+        h_scroll.grid(row=1, column=0, sticky="ew")
+        v_scroll.grid(row=0, column=1, sticky="ns")
+        self.canvas.configure(xscrollcommand=h_scroll.set, yscrollcommand=v_scroll.set)
+
+        # Store original PIL image
+        self.original_pil_image = original_pil_image
+        self.zoom_level = 1.0
+
+        # Initial image display
+        self.update_image()
+
+        # Bind zoom events
+        self.canvas.bind("<MouseWheel>", self.zoom_image)  # Windows
+        self.canvas.bind("<Button-4>", self.zoom_image)   # Linux scroll up
+        self.canvas.bind("<Button-5>", self.zoom_image)   # Linux scroll down
+
+        # Update scroll region
+        self.canvas.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+
+    def update_image(self):
+        """Update the displayed image based on the current zoom level."""
+        # Calculate new size based on zoom level
+        original_size = self.original_pil_image.size
+        new_size = (int(original_size[0] * self.zoom_level), int(original_size[1] * self.zoom_level))
+
+        # Resize image
+        resized_image = self.original_pil_image.resize(new_size, RESAMPLE)
+        self.photo = ImageTk.PhotoImage(resized_image)
+
+        # Update or create image on canvas
+        if hasattr(self, 'image_id'):
+            self.canvas.delete(self.image_id)
+        self.image_id = self.canvas.create_image(0, 0, image=self.photo, anchor="nw")
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
+    def zoom_image(self, event):
+        """Handle image zooming with mouse wheel."""
+        # Adjust zoom level
+        if event.delta > 0 or event.num == 4:
+            self.zoom_level *= 1.1  # Zoom in
+        elif event.delta < 0 or event.num == 5:
+            self.zoom_level /= 1.1  # Zoom out
+
+        # Limit zoom level
+        self.zoom_level = max(0.5, min(self.zoom_level, 3.0))
+
+        # Update image
+        self.update_image()
 
 class OutputWindow(ctk.CTkToplevel):
-        def __init__(self, lexer,syntaxerrors=None, ast_text=None, ast_image=None, python_code=None,semok = False):
+        def __init__(self, lexer, syntaxerrors=None, ast_text=None, python_code=None, semok=False):
                 super().__init__()
                 self.title("Conversion Results")
                 self.geometry("1000x1000")
@@ -199,11 +325,9 @@ class OutputWindow(ctk.CTkToplevel):
                 self.tab_view.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
                 self.tab_view.add("Tokens")
                 self.tab_view.add("Syntax Text ( IR )")
-                self.tab_view.add("AST Image")
                 self.tab_view.add("Python Code")
 
                 # *************************** TOKEN COMPONENT ***********************
-
                 # Populate Tokens
                 tokens_list = [f"{tok}\n\n" for tok in lexer.errorList]
                 for tok in lexer:
@@ -214,9 +338,7 @@ class OutputWindow(ctk.CTkToplevel):
                     )
                 self.tokens_text = makeComponent(self.tab_view, "Tokens", tokens_list)
 
-
                 # *************************** AST COMPONENT ***********************
-
                 # AST Text or Syntax Errors
                 if ast_text is not None:
                         synlist = []
@@ -237,27 +359,10 @@ class OutputWindow(ctk.CTkToplevel):
                                 synlist.append("\nSemantically not correct\n")
                         self.syntaxerrors = makeComponent(self.tab_view, "Syntax Text ( IR )", synlist)
 
-
-                # *************************** IMAGE COMPONENT ***********************
-                # AST Image
-                if ast_image:
-                        self.image_label = ctk.CTkLabel(
-                            self.tab_view.tab("AST Image"),
-                            text="AST will appear here" if not ast_image else "",
-                            image=ast_image,
-                            font=("Courier", 14)
-                        )
-                        self.image_label.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
-                        self.tab_view.tab("AST Image").grid_rowconfigure(0, weight=1)
-                        self.tab_view.tab("AST Image").grid_columnconfigure(0, weight=1)
-
-
-                # *************************** python COMPONENT ***********************
-
+                # *************************** PYTHON COMPONENT ***********************
                 # Python Code
                 if python_code:
-                    self.python_text = makeComponent(self.tab_view, "Python Code", python_code, is_list=False)
-
+                    self.python_text = makeComponent(self.tab_view, "Python Code", python_code, is_list=False, is_python=True)
 
 if __name__ == "__main__":
         app = InputWindow()
