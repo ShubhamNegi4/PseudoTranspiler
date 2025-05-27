@@ -1,25 +1,28 @@
 #                       Text Based visualization 
 
-def dfsText(node, indent):
+def dfsText(node, indent,asttext):
         # Handle lists (e.g., statement_list)
         if isinstance(node, list):
                 for child in node:
-                        dfsText(child, indent)
+                        dfsText(child, indent,asttext)
                 return
     
         # Print node type and value (if any)
         value_str = f" (value: {node.value})" if node.value is not None else ""
-        print("  " * indent + f"|-- {node.type}{value_str}")
+        asttext.append("  " * indent + f"|-- {node.type}{value_str}")
         
         # Recurse on children
         for child in node.children:
-                dfsText(child, indent + 1)
+                dfsText(child, indent + 1,asttext)
 
 
 
 def visualizeText(node):
-        print("AST Visualization:")
-        dfsText(node, 0)
+        asttext  = []
+        dfsText(node, 0,asttext)
+        return asttext
+
+
 
 
 

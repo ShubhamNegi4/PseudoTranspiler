@@ -216,12 +216,13 @@ def p_operand(p):
 # When parser sees an input it can't reduce or shift based on the grammar,it calls p_error:
 def p_error(p):
         if p:
-                print(f"Syntax error at token '{p.value}'")
+                parser.errorList.append(f"Syntax error at token '{p.value}'")
         else:
-                print("Unknown Syntax error")
+                parser.errorList.append("Unknown Syntax error")
         
         raise SyntaxError("Invalid syntax in custom parser")
 
 
 
 parser = yacc.yacc()
+parser.errorList = []
