@@ -14,6 +14,11 @@ import AstVisual
 import semantic
 import codegen
 
+#       enable copy 
+def enable_copy_shortcut(widget):
+    widget.bind("<Control-c>", lambda event: widget.event_generate("<<Copy>>"))
+
+
 # Suppress CtkLabel UserWarning about PhotoImage
 warnings.filterwarnings(
         "ignore",
@@ -63,6 +68,7 @@ class InputWindow(ctk.CTk):
                         wrap="word"
                 )
                 self.input_text.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+                enable_copy_shortcut(self.input_text)
                 self.input_text.bind("<KeyRelease>", self.highlight_syntax)
 
                 # Buttons
@@ -160,6 +166,7 @@ def makeComponent(tabview, tab_name, content, is_list=True):
             highlightthickness=0,
             wrap="word"
         )
+        enable_copy_shortcut(text_widget)
         text_widget.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
 
         if content:

@@ -66,7 +66,9 @@ if __name__ == "__main__":
                 for i in asttext:
                         print(i)
 
+                print()
                 AstVisual.visualizeGraph(ast)
+                print()
 
                 #       call the semantic analyzer
                 if semantic.SemanticAnalysis(ast):
@@ -81,10 +83,10 @@ if __name__ == "__main__":
                         print(PythonCode)
                         #       enter in file too
                         try:
-                                with open('output.txt', 'w') as file:
+                                with open('output.py', 'w') as file:
                                         data = file.write(PythonCode)
                         except FileNotFoundError:
-                                print("Make an output.txt file (exact name required)")
+                                print("Make an output.py file (exact name required)")
                                 exit()
                                 
                 except  Exception as e:
