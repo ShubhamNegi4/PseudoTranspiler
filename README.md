@@ -72,4 +72,4 @@ OR
 **Terms**: Variables, numbers, strings (in quotes)  
 **Operators**:  
 - Arithmetic: `PLUS`, `MINUS`, `MULTIPLY`, `DIVIDE`, `MOD`  
-- Comparison: `EQ`, `NE`, `GT`, `LT`, `GE`, `LE`
+- Comparison: `EQ`, `NE`, `GT`, `LT`, `GE`, `LE` , 'TYPE_EQ'
