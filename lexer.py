@@ -129,7 +129,7 @@ def t_NEWLINE(token):
 
 # error handling
 def t_error(token):
-        print(f"Illegal character '{token.value[0]}' at line {token.lexer.lineno}")
+        token.lexer.errorList.append(f"Illegal character '{token.value[0]}' at line {token.lexer.lineno} at pos {token.lexer.lexpos}")
         token.lexer.skip(1)             #skip the faulty character ( can stop here as well but let the
                                         # lexer collect all errors , dont run parser if you get errors)
         token.lexer.errors += 1
@@ -146,5 +146,6 @@ def t_error(token):
 '''
 lexer = lex.lex()
 lexer.errors = 0
+lexer.errorList = []
 
 

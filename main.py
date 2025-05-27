@@ -2,12 +2,13 @@ import lexer
 import parser
 import AstVisual
 import semantic
+import codegen
 
 
 if __name__ == "__main__":
 
         print("Enter\n 1. TO input from terminal\n 2. To input from file")
-        print("Enter your pseudocode (end with a blank line):")
+        print("Enter your choice : ")
         choice = input()
 
         if choice == '1' or choice == '2':
@@ -21,7 +22,7 @@ if __name__ == "__main__":
                                 if line.strip() == "":
                                         break
                                 lines.append(line)
-                        data = "\n".join(lines)
+                        data = "\n".join(lines) + "\n"
                 else:
                         try:
                                 with open('input.txt', 'r') as file:
@@ -46,6 +47,8 @@ if __name__ == "__main__":
                         print(f"        lexpos: {token.lexpos}")
 
                 if lexer.lexer.errors > 0:
+                        for i in lexer.lexer.errorList:
+                                print(i)
                         exit(1)
 
                 #       call the parser
@@ -54,10 +57,15 @@ if __name__ == "__main__":
                         ast = parser.parser.parse(data,lexer = lexer.lexer)
                 except  Exception as e:
                         print("Caught an error:", e)
-                        exit()
+                        for i in parser.parser.errorList:
+                                print(i)
+                        exit(1)
 
                 print("AST:")
-                AstVisual.visualizeText(ast)
+                asttext = AstVisual.visualizeText(ast)
+                for i in asttext:
+                        print(i)
+
                 AstVisual.visualizeGraph(ast)
 
                 #       call the semantic analyzer
@@ -67,6 +75,20 @@ if __name__ == "__main__":
                         print("AST is Semantically not correct")
                         exit()
 
+                try:
+                        PythonCode = codegen.CodeGenerator(ast)
+                        print("Corresponsing Python Code : \n")
+                        print(PythonCode)
+                        #       enter in file too
+                        try:
+                                with open('output.txt', 'w') as file:
+                                        data = file.write(PythonCode)
+                        except FileNotFoundError:
+                                print("Make an output.txt file (exact name required)")
+                                exit()
+                                
+                except  Exception as e:
+                        print("Caught an error while generating:", e)
 
         else:
                 print("Enter valid choice")
