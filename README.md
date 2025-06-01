@@ -72,4 +72,21 @@ OR
 **Terms**: Variables, numbers, strings (in quotes)  
 **Operators**:  
 - Arithmetic: `PLUS`, `MINUS`, `MULTIPLY`, `DIVIDE`, `MOD`  
-- Comparison: `EQ`, `NE`, `GT`, `LT`, `GE`, `LE` , 'TYPE_EQ'
+- Comparison: `EQ`, `NE`, `GT`, `LT`, `GE`, `LE` , `TYPE_EQ`
+
+
+
+## compile the program written in pseudocode
+```
+./run.sh
+```
+
+## See all the intermediate phases on treminal / file
+```
+python3 main.py
+```
+
+## See all the intermediate phases as a GUI
+```
+python3 app.py
+```
