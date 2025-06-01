@@ -1,6 +1,9 @@
 # PseudoTranspiler
 🔧 Converts pseudocode to Python using compiler design principles.
 
+## 📺 Demo
+[![Watch the video](https://img.youtube.com/vi/e4cIgLsNtTU/hqdefault.jpg)](https://www.youtube.com/watch?v=e4cIgLsNtTU)
+
 
 ## APPROACH : 
 1.	Input  : We begin with a well-defined grammar and syntax for our pseudocode language (inspired by common educational styles like pseudocode) which will be inputed from terminal / file / web app
