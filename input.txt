@@ -1,11 +1,12 @@
+PRINT "ENTER A NUMBER:"
 INPUT x
 
 IF x === 1 THEN
 
-SET divisors to 0
+SET divisors TO 0
 SET i to 2
 
-while i * i <= 1 DO
+WHILE i * i <= x DO
 
 IF x % i == 0 THEN
 SET divisors TO divisors + 1

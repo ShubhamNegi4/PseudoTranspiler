@@ -114,7 +114,7 @@ def dfs(node,Pycode,indentation):
                         rightexpression = dfs(rightChild, Pycode, indentation).lstrip()
                         op = node.value
 
-                        return [leftChild.value , f'isdigit({leftexpression})']
+                        return [leftChild.value , f'{leftexpression}.isdigit()']
                 
                 else:
 
